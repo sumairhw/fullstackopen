@@ -58,7 +58,7 @@ const App = () => {
   const searchContacts = (event) => {
     event.preventDefault()
     console.log(newSearch)
-    const term = newSearch.toLocaleLowerCase()
+    const term = newSearch.toLowerCase()
     const filteredList = persons.filter(
       (p) => p.name.toLowerCase().indexOf(term) !== -1
     )
