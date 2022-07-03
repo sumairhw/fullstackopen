@@ -1,7 +1,7 @@
-const DisplayContact = ({ name, phone }) => (
+const DisplayContact = ({ name, phone, onClick }) => (
   <p>
-    {name} {phone}
+    {name} {phone} <button onClick={onClick}>delete</button>
   </p>
-)
+);
 
-export default DisplayContact
+export default DisplayContact;
