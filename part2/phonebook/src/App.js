@@ -5,12 +5,15 @@ import PersonForm from './components/form';
 import DisplayContact from './components/contact';
 import FilterForm from './components/filter';
 import contactUtils from './services/contactUtils';
+import Notification from './components/notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [newSearch, setSearch] = useState('');
+  const [notification, setNotification] = useState(null);
+  const [success, setSuccess] = useState(true);
   const [showFiltered, setFiltered] = useState(false);
   const [filteredList, setFilteredList] = useState([]);
   const handleNameChange = (event) => setNewName(event.target.value);
@@ -49,10 +52,21 @@ const App = () => {
       )
     ) {
       const changedContact = { ...contact, number: newNumber };
-      contactUtils.update(contact.id, changedContact).then((changedContact) => {
-        setPersons(persons.map((p) => (changedContact.id !== p.id ? p : changedContact)));
-      });
+      contactUtils
+        .update(contact.id, changedContact)
+        .then((changedContact) => {
+          setPersons(persons.map((p) => (changedContact.id !== p.id ? p : changedContact)));
+          setNotification(`Updated ${newName}`);
+          setSuccess(true);
+          setTimeout(() => setNotification(null), 5000);
+        })
+        .catch((error) => {
+          setNotification(`${newName} has already been deleted from server`);
+          setSuccess(false);
+          setTimeout(() => setNotification(null), 5000);
+        });
     }
+
     console.log(contact);
     setNewName('');
   };
@@ -74,14 +88,17 @@ const App = () => {
 
     contactUtils.addContact(newContact).then((returnedContact) => {
       setPersons(persons.concat(returnedContact));
+      setNotification(`Added ${newName}`);
       setNewName('');
       setNewNumber('');
+      setTimeout(() => setNotification(null), 4000);
     });
   };
 
   return (
-    <div>
+    <div className='app'>
       <h1>Phonebook</h1>
+      <Notification message={notification} success={success} />
       <h2>Search</h2>
       <FilterForm onSubmit={searchContacts} onChange={handleSearchChange} />
       {showFiltered && filteredList.length

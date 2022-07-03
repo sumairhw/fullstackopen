@@ -19,7 +19,7 @@ const remove = (id) => {
 
 const update = (id, newContact) => {
   const request = axios.put(`${baseUrl}/${id}`, newContact);
-  return request.then((response) => response.data);
+  return request.then((response) => response.data).catch((error) => console.log(error));
 };
 
 export default { getAll, addContact, remove, update };
