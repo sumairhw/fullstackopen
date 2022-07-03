@@ -1,43 +1,13 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Filter = ({ onSubmit, onChange }) => {
-  return (
-    <form onSubmit={onSubmit}>
-      Search : <input onChange={onChange} />
-      <br /> <br />
-      <button type='submit'>Search</button>
-    </form>
-  )
-}
-
-const PersonForm = ({
-  onSubmit,
-  handleNameChange,
-  handleNumberChange,
-  newName,
-  newPhone,
-}) => {
-  return (
-    <form onSubmit={onSubmit}>
-      name : <input onChange={handleNameChange} value={newName} />
-      <br /> <br />
-      phone : <input onChange={handleNumberChange} value={newPhone} />
-      <br /> <br />
-      <button type='submit'>Add</button>
-    </form>
-  )
-}
-
-const DisplayContact = ({ name, phone }) => (
-  <p>
-    {name} {phone}
-  </p>
-)
+import Filter from './components/filter'
+import PersonForm from './components/form'
+import DisplayContact from './components/contact'
 
 const App = () => {
+  const baseUrl = 'http://localhost:3001/persons'
   const [persons, setPersons] = useState([])
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setSearch] = useState('')
@@ -49,9 +19,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => setPersons(response.data))
+    axios.get(baseUrl).then((response) => setPersons(response.data))
   }, [])
   console.log('rendered', persons.length, 'persons')
 
@@ -77,14 +45,15 @@ const App = () => {
       return
     }
 
-    const obj = {
+    const newContact = {
       name: newName,
       number: newNumber,
     }
-
-    setPersons(persons.concat(obj))
-    setNewName('')
-    setNewNumber('')
+    axios.post(baseUrl, newContact).then((response) => {
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   return (
